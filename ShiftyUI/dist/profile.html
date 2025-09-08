@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    
+</head>
+<body>
+    <div class="flex justify-center items-center h-screen">
+        <form id="profile">
+            <div class="w-96 p-6 shadow-lg bg-white rounded-md">
+                <h1 class="text-3xl block text-center font-semibold"><i class="fa-solid fa-user"></i> Profile</h1>
+                <hr class="mt-3">
+                <div class="mt-3">
+                    <label for="clientid" class="block text-base mb-2">Client ID</label>
+                    <input id="clientid" type="text" id="clientid" class="border w-full text-base px-2 py-1 focus:outline-none focus:ring-0 focus:border-gray-600" placeholder="Enter Client ID..." />
+                </div>
+                <div class="mt-3">
+                    <label for="username" class="block text-base mb-2">Username</label>
+                    <input id ="username" type="text" id="username" class="border w-full text-base px-2 py-1 focus:outline-none focus:ring-0 focus:border-gray-600" placeholder="Enter Username..." />
+                </div>
+                <div class="mt-3">
+                    <label for="password" class="block text-base mb-2">Password</label>
+                    <input id="password" type="password" id="password" class="border w-full text-base px-2 py-1 focus:outline-none focus:ring-0 focus:border-gray-600" placeholder="Enter Password..." />
+                </div>
+                <div class="mt-5">
+                    <button id="save" type="submit" class="border-2 border-blue-500 bg-blue-500 text-white py-1 w-full rounded-md hover:bg-transparent hover:text-blue-500 font-semibold">&nbsp;&nbsp;Save</button>
+                </div>
+                <div class="mt-3">
+                    <button id="testLogin" class="border-2 border-green-500 bg-green-500 text-white py-1 w-full rounded-md hover:bg-transparent hover:text-green-500 font-semibold">&nbsp;&nbsp;Test Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        document.getElementById('profile').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let jsonObject = {
+                clientid: document.getElementById("clientid").value,
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            };
+            
+            console.log(JSON.stringify(jsonObject));
+        });
+
+    </script>
+    
+</body>
+</html>

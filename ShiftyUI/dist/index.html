@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="output.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+    
+
+</head>
+<body class="m-8">
+    <form id="Task">
+
+        <!-- Time Section -->
+        <div class="mb-4">
+            <h1 class="text-lg font-semibold mb-2">Time</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-blue-500 rounded-md px-1 py-1">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                    <input type="date" id="end_date" name="end_date" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-blue-500 rounded-md px-1 py-1">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Refresh Delay Section -->
+        <div class="mb-4">
+            <h1 class="text-lg font-semibold mb-2">Refresh Delay</h2>
+            <label for="refresh_delay" class="block text-sm font-medium text-gray-700">Delay</label>
+            <input type="number" id="refresh_delay" name="refresh_delay" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-1 py-1" placeholder="Enter delay in seconds...">
+        </div>
+        <!-- Release Time Section -->
+        <div class="mb-4">
+            <h1 class="text-lg font-semibold mb-2">Release Time</h2>
+            <div class="grid grid-cols-4 gap-4">
+                <div>
+                    <label for="release_time" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="release_time" step=".05" name="release_time" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-1 py-1">
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Target Shifts Section -->
+        <div class="mb-6">
+            <h1 class="text-lg font-semibold mb-2">Target Shifts</h2>
+            <label for="target_shifts" class="block text-sm font-medium text-gray-700">Shifts (Type, Date, StartTime, EndTime)</label>
+            <textarea id="target_shifts" name="target_shifts" rows="4" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-1 py-1" placeholder="Enter each shift on a new line (ex. Coffee, 2023-11-15, 330, 600)"></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Play
+        </button>
+
+    </form>
+
+    <script>
+        document.getElementById("start_date").valueAsDate = new Date();
+        document.getElementById('Task').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Collecting and validating date range
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+
+            const start = luxon.DateTime.fromISO(startDate);
+            const end = luxon.DateTime.fromISO(endDate);
+            const diff = end.diff(start, 'days').days;
+
+            if (diff > 31) {
+                alert('Date range should not exceed 31 days.');
+                return;
+            }
+
+
+            const timeValue = document.getElementById('release_time').value;
+
+            let [hours, minutes, seconds] = timeValue.split(':').map(parseFloat);
+
+           
+            let milliseconds = 0;
+            if (seconds % 1 !== 0) {  
+                milliseconds = Math.round((seconds % 1) * 1000);
+                seconds = Math.floor(seconds);
+            }
+            
+            const releaseTime = {
+                hr: hours,
+                min: minutes,
+                sec: seconds,
+                ms: milliseconds
+            };
+
+            // Collecting refresh delay
+            const refreshDelay = parseInt(document.getElementById('refresh_delay').value) || 0;
+
+            // Processing target shifts
+            const targetShiftsText = document.getElementById('target_shifts').value;
+            const targetShifts = targetShiftsText.split('\n').map(shift => {
+                // Logic to split and format each shift
+                // Example format: "type, date, startTime, endTime"
+                let parts = shift.split(',').map(p => p.trim());
+                return {
+                    type: parts[0],
+                    date: parts[1],
+                    startTime: parts[2] ? parseInt(parts[2]) : undefined,
+                    endTime: parts[3] ? parseInt(parts[3]) : undefined,
+                };
+            });
+
+            // Forming the final JSON object
+            const data = {
+                filters: {
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                releaseTime: releaseTime,
+                refreshDelay: refreshDelay,
+                targetShifts: targetShifts
+            };
+
+            console.log(data);
+        });
+
+</script>
+    
+</body>
+</html>
