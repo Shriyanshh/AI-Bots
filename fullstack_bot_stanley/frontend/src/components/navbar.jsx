@@ -8,13 +8,14 @@ import { Link } from 'react-router-dom';
 
 
 
-const NavBar = () => {
+const NavBar = ({ onLogout, username }) => {
     const [open, setOpen] = useState(true);
     const Menus = [
         { title: "Dashboard", icon: <RiDashboardFill/>, path: "/dashboard" },
         { title: "Tasks", icon: <GrTasks/>, path: "/tasks" },
         { title: "Profile", icon: <BsPerson/>, path: "/profile" },
-        { title: "Logout", icon: <AiOutlineLogout/>, path: "/logout"},
+        { title: "Payment Profile", icon: <BsPerson/>, path: "/user-profile" },
+        { title: "Logout", icon: <AiOutlineLogout/>, path: "/logout", onClick: onLogout},
       ];
 
     
@@ -33,6 +34,12 @@ const NavBar = () => {
           </h1>
         </div>
 
+        {/* User Info */}
+        <div className={`mt-4 p-2 bg-gray-100 rounded ${!open && "hidden"}`}>
+          <p className="text-sm text-gray-600">Welcome back,</p>
+          <p className="font-semibold text-gray-800">{username}</p>
+        </div>
+
         {/*Arrow icon and search bar*/}
         <div className={`flex items-center border border-black rounded-md bg-white mt-6 ${!open ? "px-2.5" : "px-4"} py-2`}>
           <BsSearch className={`text-black text-lg block float-left cursor-pointer ${open && "mr-2"}`}/>
@@ -48,14 +55,25 @@ const NavBar = () => {
               key={index}
               className={`text-black text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md ${menu.spacing ? "mt-9" : "mt-2"}`}
           >
-              <Link to={menu.path} className="flex items-center w-full">
+              {menu.onClick ? (
+                <button onClick={menu.onClick} className="flex items-center w-full">
                   <span className="text-2xl block float-left">
                       {menu.icon}
                   </span>
                   <span className={`text-base font-medium flex-1 duration-200 ${!open && "hidden"}`}>
                       {menu.title}
                   </span>
-              </Link>
+                </button>
+              ) : (
+                <Link to={menu.path} className="flex items-center w-full">
+                    <span className="text-2xl block float-left">
+                        {menu.icon}
+                    </span>
+                    <span className={`text-base font-medium flex-1 duration-200 ${!open && "hidden"}`}>
+                        {menu.title}
+                    </span>
+                </Link>
+              )}
           </li>
               
             ))}

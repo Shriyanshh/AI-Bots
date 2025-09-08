@@ -3,6 +3,7 @@
 import express from 'express';
 import cors from 'cors';
 import { run } from "./bot.js";
+import { registerUser, loginUser, verifyToken, getUserById } from "./auth.js";
 
 const app = express();
 const port = 3001;
@@ -11,6 +12,62 @@ app.use(cors());
 app.use(express.json());
 
 let taskQueue = {};
+
+// Authentication endpoints
+app.post('/auth/register', async (req, res) => {
+  try {
+    const { email, password, username } = req.body;
+    const user = await registerUser(email, password, username);
+    res.json({ 
+      success: true, 
+      user,
+      message: 'Account created successfully' 
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+app.post('/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const { user, token } = await loginUser(email, password);
+    res.json({ 
+      success: true, 
+      user,
+      token,
+      userId: user.id,
+      username: user.username,
+      message: 'Login successful' 
+    });
+  } catch (error) {
+    res.status(401).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Middleware to verify authentication
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Access token required' });
+  }
+
+  const user = verifyToken(token);
+  if (!user) {
+    return res.status(403).json({ success: false, message: 'Invalid token' });
+  }
+
+  req.user = user;
+  next();
+}
 
 
 app.post('/start', async (req, res) => {
